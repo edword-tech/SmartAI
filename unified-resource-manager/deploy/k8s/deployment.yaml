@@ -1,0 +1,128 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unified-resource-manager
+  namespace: flexai-system
+  labels:
+    app: unified-resource-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unified-resource-manager
+  template:
+    metadata:
+      labels:
+        app: unified-resource-manager
+    spec:
+      serviceAccountName: unified-resource-manager
+      containers:
+      - name: manager
+        image: flexai/unified-resource-manager:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        env:
+        - name: PORT
+          value: "8080"
+        - name: GPU_DEVICE_PLUGIN_ENDPOINT
+          value: "unix:///var/lib/kubelet/device-plugins/gpu.sock"
+        - name: GPU_RUNTIME_ENDPOINT
+          value: "unix:///var/run/gpu-runtime.sock"
+        - name: GPU_EXPORTER_ENDPOINT
+          value: "http://xpu-exporter:9091"
+        - name: NPU_HYPERVISOR_ENDPOINT
+          value: "http://flexnpud:8080"
+        - name: NPU_ACL_SERVER_ENDPOINT
+          value: "http://aclserver:8625"
+        volumeMounts:
+        - name: kubelet-socket
+          mountPath: /var/lib/kubelet/device-plugins
+          readOnly: true
+        - name: runtime-socket
+          mountPath: /var/run
+          readOnly: true
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      volumes:
+      - name: kubelet-socket
+        hostPath:
+          path: /var/lib/kubelet/device-plugins
+          type: Directory
+      - name: runtime-socket
+        hostPath:
+          path: /var/run
+          type: Directory
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: unified-resource-manager
+  namespace: flexai-system
+  labels:
+    app: unified-resource-manager
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: unified-resource-manager
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: unified-resource-manager
+  namespace: flexai-system
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: unified-resource-manager
+  namespace: flexai-system
+rules:
+- apiGroups: [""]
+  resources: ["pods", "nodes"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: unified-resource-manager
+  namespace: flexai-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: unified-resource-manager
+subjects:
+- kind: ServiceAccount
+  name: unified-resource-manager
+  namespace: flexai-system

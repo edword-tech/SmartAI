@@ -1,0 +1,11 @@
+.cluster-pools-container {
+  padding: 0 24px 24px;
+}
+
+.cluster-pools-header {
+  margin-bottom: 24px;
+}
+
+.cluster-pools-header .ant-typography {
+  display: block;
+}

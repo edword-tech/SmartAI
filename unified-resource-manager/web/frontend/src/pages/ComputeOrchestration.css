@@ -1,0 +1,4 @@
+.compute-orchestration-container { padding: 0; }
+.compute-orchestration-header { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #f0f0f0; }
+.strategy-card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; }
+.strategy-card:hover { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12); transform: translateY(-2px); }

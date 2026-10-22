@@ -1,0 +1,42 @@
+# kube-scheduler 扩展器配置：把 GPU/NPU 拓扑、切分、Gang 交给 Unified Resource Manager
+#
+# 用法：
+#   1. 将本文件挂到 kube-scheduler 的 --config
+#   2. 或把 extender 段合并进现有 KubeSchedulerConfiguration
+apiVersion: kubescheduler.config.k8s.io/v1
+kind: KubeSchedulerConfiguration
+leaderElection:
+  leaderElect: false
+extenders:
+  - urlPrefix: "http://unified-resource-manager:8080/scheduler/extender"
+    filterVerb: filter
+    prioritizeVerb: prioritize
+    weight: 5
+    enableHTTPS: false
+    nodeCacheCapable: true
+    ignorable: true
+    managedResources:
+      - name: nvidia.com/gpu
+        ignoredByScheduler: false
+      - name: huawei.com/npu
+        ignoredByScheduler: false
+      - name: huawei.com/vgpu-number
+        ignoredByScheduler: false
+---
+# 训练任务示例：8 卡 Gang + 拓扑亲和
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: llama-train-w0
+#   annotations:
+#     urm.flexai.io/task-type: training
+#     urm.flexai.io/count: "8"
+#     urm.flexai.io/share-mode: exclusive
+#     urm.flexai.io/gang-group: llama-train
+#     urm.flexai.io/queue: training
+# spec:
+#   containers:
+#     - name: trainer
+#       resources:
+#         requests:
+#           nvidia.com/gpu: "8"

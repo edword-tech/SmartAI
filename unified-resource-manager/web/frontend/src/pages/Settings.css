@@ -1,0 +1,22 @@
+.settings-container {
+  padding: 0;
+}
+
+.settings-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.settings-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.settings-card .ant-tabs-tab {
+  font-weight: 500;
+}
+
+.settings-card .ant-form-item-label > label {
+  font-weight: 500;
+}

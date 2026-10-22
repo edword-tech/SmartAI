@@ -15,3 +15,50 @@ Flex:ai是一个面向AI容器场景的开源项目，其核心能力包含两�
 # GPU虚拟化
 
 请查看[GPU-Virtual-Service](GPU-Virtual-Service/)
+
+# 统一异构资源管理系统
+
+请查看[Unified Resource Manager](unified-resource-manager/)
+
+## 概述
+
+统一异构资源管理系统是一个面向商业化的 AI 资源管理平台，在保持原有 GPU-Virtual-Service 和 Ascend-Virtual-Service 代码不变的基础上，提供统一的异构资源管理能力。
+
+### 核心功能
+
+- **异构资源池化管理**: 统一管理 GPU 和 NPU 资源池
+- **智能资源分配**: 支持推理和训练任务的智能调度
+- **可观测性**: 完整的监控、指标、日志和告警系统
+- **大规模集群管理**: 节点管理、资源发现、健康检查
+- **商业化特性**: RESTful API、Web 管理界面、多租户支持
+
+### 快速开始
+
+```bash
+# 部署统一资源管理器
+cd unified-resource-manager/deploy/k8s
+kubectl apply -f deployment.yaml
+
+# 访问 API
+curl http://localhost:8080/api/v1/pools
+```
+
+详细文档请参考 [unified-resource-manager/README.md](unified-resource-manager/README.md)
+
+
+1. 启动后端
+cd unified-resource-manager
+go run cmd/main.go
+后端会在 http://localhost:8080 提供 API。
+建议先启动后端，再启动前端，否则前端请求会连不上（ECONNREFUSED）。
+2. 启动前端
+新开一个终端：
+
+cd unified-resource-manager/web/frontend
+npm install    # 首次需要
+npm run dev
+前端会在 http://localhost:3000 启动。
+开发时请求会通过 Vite 代理到 http://127.0.0.1:8080；如需改代理目标，可设环境变量 VITE_PROXY_TARGET。
+3. 访问
+Web 界面：http://localhost:3000
+API 根路径：http://localhost:8080/api/v1

@@ -1,0 +1,8 @@
+.compute-perception-container { padding: 0; }
+.compute-perception-header { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #f0f0f0; }
+.stat-card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; }
+.stat-card:hover { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12); transform: translateY(-2px); }
+.perception-table-card { border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
+.perception-table-card .ant-table { border-radius: 8px; }
+.perception-table-card .ant-table-thead > tr > th { background: #fafafa; font-weight: 600; }
+.perception-table-card .ant-table-tbody > tr:hover > td { background: #f5f5f5; }
